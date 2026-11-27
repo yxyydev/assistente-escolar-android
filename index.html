@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#7A4A1C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<title>Assistente Escolar</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light;
+--surface:#FBF3E0;--s-low:#F6EAD0;--s-mid:#F0E1C2;--s-high:#EADBB8;--on:#3B2F20;--onv:#6E5C45;--outline:#9C8662;--outv:#D6C49E;
+--pri:#7A4A1C;--prx:#FFF7E8;--sec:#E6D6A8;--onsec:#3A3012;--ok:#52632B;--bad:#8F2B1F;--badbg:#F7D8CE;
+--bg:var(--surface);--card:var(--s-low);--tx:var(--on);--mut:var(--onv);--bd:var(--outv);--soft:var(--s-mid);
+--serif:"Lora",Georgia,"Iowan Old Style","Palatino Linotype",serif;--sans:"Roboto","Segoe UI",system-ui,-apple-system,sans-serif}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+--surface:#1F1912;--s-low:#272018;--s-mid:#2F271D;--s-high:#392F23;--on:#EBDDC2;--onv:#BFAD8E;--outline:#8C7B60;--outv:#4B3F2E;
+--pri:#E3B87A;--prx:#3A2406;--sec:#4A4027;--onsec:#EDE0B4;--ok:#B8CB7C;--bad:#FFB4A4;--badbg:#6B2419}}
+:root[data-theme="dark"]{color-scheme:dark;
+--surface:#1F1912;--s-low:#272018;--s-mid:#2F271D;--s-high:#392F23;--on:#EBDDC2;--onv:#BFAD8E;--outline:#8C7B60;--outv:#4B3F2E;
+--pri:#E3B87A;--prx:#3A2406;--sec:#4A4027;--onsec:#EDE0B4;--ok:#B8CB7C;--bad:#FFB4A4;--badbg:#6B2419}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;color:var(--tx);font:400 15px/1.45 var(--sans);min-height:100vh;accent-color:var(--pri);
+background:radial-gradient(1100px 520px at 50% -140px,color-mix(in srgb,var(--pri) 12%,transparent),transparent 70%),var(--surface)}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+h1{font:600 28px/1.2 var(--serif);margin:0 0 4px;letter-spacing:.2px}
+.sub{color:var(--mut);font-size:14px;margin:0 0 16px;padding-bottom:14px;border-bottom:3px double var(--bd)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+button,select,input,textarea{font-family:var(--sans);color:var(--tx)}
+button{font-size:14px;font-weight:500;line-height:1;letter-spacing:.1px;color:var(--onsec);background:var(--sec);border:0;border-radius:20px;height:40px;padding:0 18px;cursor:pointer;transition:box-shadow .2s,background .2s}
+button:hover{box-shadow:0 1px 3px rgba(60,40,10,.28);background:color-mix(in srgb,var(--sec),var(--onsec) 9%)}
+button:active{background:color-mix(in srgb,var(--sec),var(--onsec) 16%)}
+button:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+button.pri{background:var(--pri);color:var(--prx)}
+button.pri:hover{background:color-mix(in srgb,var(--pri),var(--prx) 12%)}
+button:disabled{opacity:.38;cursor:not-allowed;box-shadow:none}
+button.ico{height:32px;width:32px;padding:0;border-radius:50%;background:transparent;color:var(--onv)}
+button.ico:hover{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad);box-shadow:none}
+.top .ico{height:40px;width:40px;font-size:18px;background:var(--sec);color:var(--onsec)}
+.top .ico:hover{background:var(--s-high);color:var(--tx)}
+select{font-size:14px;color:var(--tx);background:var(--s-low);border:1px solid var(--outline);border-radius:12px;height:40px;padding:0 12px;min-width:160px}
+#busca{flex:1;min-width:200px;height:48px;background:var(--s-high);color:var(--tx);border:0;border-radius:28px;padding:0 20px;font-size:15px}
+#busca::placeholder{color:var(--onv)}
+.tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding:2px 0 4px;scrollbar-width:thin}
+.tab{flex:none;background:transparent;color:var(--onv);border:1px solid var(--outv);border-radius:8px;height:36px;padding:0 16px}
+.tab:hover{background:color-mix(in srgb,var(--on) 8%,transparent);box-shadow:none}
+.tab.on{background:var(--sec);color:var(--onsec);border-color:transparent;font-weight:600}
+.card{background:var(--s-low);border:1px solid var(--outv);border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(60,40,10,.14)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{padding:8px;text-align:center;border-bottom:1px solid var(--outv)}
+th{background:var(--s-mid);font-size:12px;font-weight:500;line-height:1.2;letter-spacing:.06em;text-transform:uppercase;color:var(--onv);position:sticky;top:0;z-index:1}
+th small{display:block;text-transform:none;letter-spacing:0;font-weight:400;margin-top:2px}
+tbody tr:hover{background:color-mix(in srgb,var(--pri) 6%,transparent)}
+tbody tr:last-child td{border-bottom:0}
+td.n{color:var(--onv);width:34px;font-variant-numeric:tabular-nums}
+td.l,th.l{text-align:left}
+input.nm{width:100%;min-width:180px;border:1px solid transparent;background:transparent;padding:8px;border-radius:8px;font-size:15px;color:var(--tx)}
+input.nm:hover{background:var(--s-mid)}
+input.g{width:64px;height:36px;text-align:center;border:1px solid var(--outline);background:var(--surface);color:var(--tx);border-radius:8px;font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
+input:focus{outline:2px solid var(--pri);outline-offset:0}
+input:disabled{opacity:.35;cursor:not-allowed;background:transparent}
+td.tot{font:700 17px var(--serif);white-space:nowrap}
+td.tot.bad{color:var(--bad);background:var(--badbg)}
+td.tot.ok{color:var(--ok)}
+.tag{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.04em;background:var(--pri);color:var(--prx);border-radius:6px;padding:2px 6px;margin-left:4px;vertical-align:middle}
+.stats{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;padding:12px 16px;color:var(--onv);font-size:13px;background:var(--s-mid)}
+.stats b{color:var(--tx);font-weight:600}
+.empty{padding:44px 16px;text-align:center;color:var(--onv)}
+dialog{border:0;border-radius:28px;background:var(--s-high);color:var(--tx);width:min(560px,92vw);padding:24px;box-shadow:0 8px 28px rgba(40,25,5,.38);max-height:90vh;overflow:auto}
+dialog::backdrop{background:rgba(35,22,8,.5)}
+dialog h2{margin:0 0 12px;font:600 24px/1.25 var(--serif)}
+dialog p{margin:0 0 12px;color:var(--onv);font-size:14px}
+dialog textarea,dialog input[type=text]{width:100%;background:var(--surface);color:var(--tx);border:1px solid var(--outline);border-radius:12px;padding:10px 12px;font-size:14px}
+dialog textarea{height:260px;resize:vertical}
+.acts{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+#dNo{background:transparent;color:var(--pri)}
+#dNo:hover{background:color-mix(in srgb,var(--pri) 10%,transparent);box-shadow:none}
+.hint{font-size:12px;color:var(--onv);margin-top:12px}
+body.ro #bNova,body.ro #bRen,body.ro #bDel,body.ro #bPdf,body.ro #bNotas,body.ro #bAdd,body.ro #bExp,body.ro #bComp,body.ro #bBak,body.ro [data-del],body.ro .hint{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>📚 Assistente Escolar</h1><span style="display:flex;gap:8px"><button id="bNuvem" class="ico" title="Sincronizar com o Google Drive" aria-label="Sincronizar com o Google Drive">☁</button><button id="bTema" class="ico" title="Alternar tema claro/escuro" aria-label="Alternar tema">🌓</button></span></div>
+  <p class="sub">AC (0–3) + AE (0–2) + AB (0–5) = 10 pontos por bimestre. A RP substitui a AB quando a AB for menor que 3 e a RP for maior.</p>
+
+  <div class="bar">
+    <select id="turma" aria-label="Turma"></select>
+    <button id="bNova" class="pri">+ Turma</button>
+    <button id="bRen">Renomear</button>
+    <button id="bDel">Excluir turma</button>
+    <span style="flex:1"></span>
+    <button id="bPdf">📄 Importar alunos (PDF)</button>
+    <button id="bNotas">📊 Importar notas (PDF)</button>
+    <button id="bAdd">+ Aluno</button>
+    <button id="bExp">⬇ Exportar PDF</button>
+    <button id="bBak">Backup</button>
+    <input type="file" id="fileN" accept="application/pdf" hidden>
+    <input type="file" id="file" accept="application/pdf" hidden>
+  </div>
+
+  <div class="bar"><input id="busca" type="search" placeholder="🔍 Pesquisar aluno pelo nome…" aria-label="Pesquisar aluno" autocomplete="off"></div>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="card" id="main"></div>
+  <p class="hint">Os dados ficam salvos neste navegador. Use o Backup para guardar uma cópia ou levar para outro aparelho.</p>
+</div>
+
+<dialog id="dlg"><h2 id="dT"></h2><p id="dP"></p><div id="dB"></div><div class="acts"><button id="dNo">Cancelar</button><button id="dOk" class="pri">OK</button></div></dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const MAX={ac:3,ae:2,ab:5,rp:5}, KEY="diario-notas-v1";
+const RO=false;
+let S={turmas:[],atual:null,escala:1}, view=1;
+if(!RO)try{const r=localStorage.getItem(KEY); if(r) S=JSON.parse(r);}catch(e){}
+const save=()=>{if(RO)return;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} try{agendaAuto();}catch(e){}};
+const $=id=>document.getElementById(id);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num=v=>{if(v===""||v==null)return null;const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n};
+const fmt=n=>(Math.round(n*10)/10).toFixed(1).replace(".",",");
+const turma=()=>S.turmas.find(t=>t.id===S.atual);
+let busca="";
+const norm=s=>String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const vis=t=>t.alunos.map((a,i)=>[a,i]).filter(([a])=>!busca.trim()||norm(a.nome).includes(norm(busca.trim())));
+const blank=()=>({1:{},2:{},3:{},4:{}});
+const entered=r=>r&&["ac","ae","ab","rp","tot"].some(k=>r[k]!==undefined&&r[k]!=="");
+
+function calc(r){
+  r=r||{};
+  if(num(r.tot)!==null&&!["ac","ae","ab","rp"].some(k=>r[k]!==undefined&&r[k]!==""))return {total:num(r.tot),needRP:false,useRP:false};
+  const ac=num(r.ac)||0, ae=num(r.ae)||0, ab=num(r.ab), rp=num(r.rp);
+  const needRP=ab!==null&&ab<3;
+  const useRP=needRP&&rp!==null&&rp>ab;
+  const best=useRP?rp:(ab||0);
+  return {total:ac+ae+best,needRP,useRP};
+}
+
+/* ---------- modal ---------- */
+function ask({title,text="",field=null,value="",ok="OK",onOk,extra}){
+  $("dT").textContent=title; $("dP").textContent=text; $("dOk").textContent=ok;
+  const b=$("dB"); b.innerHTML="";
+  let el=null;
+  if(field){el=document.createElement(field==="area"?"textarea":"input"); if(field==="line")el.type="text"; el.value=value; b.appendChild(el);}
+  if(extra)extra(b,el);
+  $("dOk").style.display=onOk?"":"none";
+  $("dOk").onclick=()=>{ if(onOk&&onOk(el?el.value:"")===false)return; $("dlg").close(); };
+  $("dNo").onclick=()=>$("dlg").close();
+  $("dNo").textContent=onOk?"Cancelar":"Fechar";
+  $("dlg").showModal(); if(el)el.focus();
+}
+
+/* ---------- render ---------- */
+function render(){
+  const sel=$("turma");
+  sel.innerHTML=S.turmas.map(t=>`<option value="${t.id}" ${t.id===S.atual?"selected":""}>${esc(t.nome)}</option>`).join("")||"<option>Sem turmas</option>";
+  const has=!!turma();
+  ["bRen","bDel","bPdf","bAdd","bNotas","bExp"].forEach(i=>$(i).disabled=!has);
+  $("bExp").textContent=(view==="a"||view==="r")?"⬇ PDF: alunos em RF":"⬇ PDF: alunos com RP";
+  $("tabs").innerHTML=[1,2,3,4].map(b=>`<button class="tab ${view===b?"on":""}" data-v="${b}">${b}º Bimestre</button>`).join("")+`<button class="tab ${view==="a"?"on":""}" data-v="a">Resumo anual</button>`+`<button class="tab ${view==="r"?"on":""}" data-v="r" ${nRF(turma())?"":"disabled"}>Recuperação final${nRF(turma())?" ("+nRF(turma())+")":""}</button>`;
+  const m=$("main");
+  if(!has){m.innerHTML=`<div class="empty">Nenhuma turma ainda.<br><br><button class="pri" onclick="novaTurma()">Criar primeira turma</button></div>`;return;}
+  const t=turma();
+  if(!t.alunos.length){m.innerHTML=`<div class="empty">Turma sem alunos.<br>Importe a lista em PDF ou adicione manualmente.</div>`;return;}
+  if(!vis(t).length){m.innerHTML=`<div class="empty">Nenhum aluno encontrado para “${esc(busca)}”.</div>`;return;}
+  if(view==="r"){renderRF(t);return;}
+  if(view==="a"){renderAnual(t);return;}
+  m.innerHTML=`<div class="scroll"><table><thead><tr><th>#</th><th class="l">Aluno</th><th>AC<small>0–3</small></th><th>AE<small>0–2</small></th><th>AB<small>0–5</small></th><th>RP<small>se AB &lt; 3</small></th><th>Total<small>0–10</small></th><th></th></tr></thead><tbody id="tb">`+
+  vis(t).map(([a,i])=>{const r=a.n[view]||{};const g=k=>`<td><input class="g" type="number" inputmode="decimal" step="0.1" min="0" max="${MAX[k]}" data-k="${k}" value="${esc(r[k]??"")}"></td>`;
+    return `<tr data-id="${a.id}"><td class="n">${i+1}</td><td class="l"><input class="nm" data-k="nome" value="${esc(a.nome)}"></td>${g("ac")}${g("ae")}${g("ab")}${g("rp")}<td class="tot"></td><td><button class="ico" data-del="${a.id}" title="Remover aluno">✕</button></td></tr>`}).join("")+
+  `</tbody></table></div><div class="stats" id="st"></div>`;
+  vis(t).forEach(([a])=>refreshRow(document.querySelector(`tr[data-id="${a.id}"]`),a));
+  stats();
+}
+function refreshRow(tr,a){
+  const r=(a.n[view]=a.n[view]||{}), c=calc(r);
+  const rp=tr.querySelector('[data-k="rp"]');
+  if(!c.needRP&&r.rp){r.rp="";rp.value="";}
+  rp.disabled=!c.needRP;
+  const td=tr.querySelector(".tot");
+  const any=entered(r);
+  td.textContent=any?fmt(c.total):"–";
+  td.className="tot "+(any?(c.total<6?"bad":"ok"):"");
+  if(any&&num(r.tot)!==null&&!["ac","ae","ab","rp"].some(k=>r[k]!==undefined&&r[k]!=="")){const s=document.createElement("span");s.className="tag";s.textContent="PDF";s.title="Total do bimestre importado do PDF (sem AC, AE e AB)";td.appendChild(s);}
+  if(c.useRP){const s=document.createElement("span");s.className="tag";s.textContent="RP";s.title="Nota da RP substituiu a AB";td.appendChild(s);}
+}
+function stats(){
+  const t=turma(), el=$("st"); if(!el)return;
+  const rs=t.alunos.filter(a=>entered(a.n[view]));
+  const tots=rs.map(a=>calc(a.n[view]).total);
+  const media=tots.length?tots.reduce((x,y)=>x+y,0)/tots.length:null;
+  el.innerHTML=`<span>Alunos: <b>${t.alunos.length}</b></span><span>Média da turma: <b>${media===null?"–":fmt(media)}</b></span><span>Abaixo de 6,0: <b>${tots.filter(x=>x<6).length}</b></span><span>Precisam de RP: <b>${t.alunos.filter(a=>calc(a.n[view]).needRP).length}</b></span>`;
+}
+function anual(a){
+  const v=[1,2,3,4].map(b=>entered(a.n[b])?calc(a.n[b]).total:null), lan=v.filter(x=>x!==null).length, soma=v.reduce((s,x)=>s+(x||0),0);
+  let c=0,bp=0; v.forEach((x,i)=>{c+=x||0; if(!bp&&Math.round(c*10)/10>=24)bp=i+1;});
+  const s=Math.round(soma*10)/10;
+  const rec=num(a.rec), rf=lan===4&&s<24;
+  return {v,lan,soma,bp,rf,ok:s>=24,rec,aprRF:rf&&rec!==null&&rec>=6,repRF:rf&&rec!==null&&rec<6};
+}
+function renderAnual(t){
+  const e=S.escala||1;
+  let h='<div class="stats"><label>Escala: <select id="esc"><option value="1"'+(e===1?' selected':'')+'>0–40 (mínimo 24)</option><option value="10"'+(e===10?' selected':'')+'>0–400 (mínimo 240)</option></select></label><span>Aprovado ao atingir soma ≥ <b>'+(24*e)+'</b></span><span>Em RF: <b>'+t.alunos.filter(a=>anual(a).rf).length+'</b></span></div><div class="scroll"><table><thead><tr><th>#</th><th class="l">Aluno</th><th>1º Bim</th><th>2º Bim</th><th>3º Bim</th><th>4º Bim</th><th>Total anual</th><th>Situação</th></tr></thead><tbody>';
+  vis(t).forEach(([a,i])=>{
+    const r=anual(a);
+    h+='<tr><td class="n">'+(i+1)+'</td><td class="l">'+esc(a.nome)+'</td>'+r.v.map(x=>'<td>'+(x===null?'–':fmt(x*e))+'</td>').join('')+'<td class="tot '+(r.rf?'bad':r.ok?'ok':'')+'">'+(r.lan?fmt(r.soma*e):'–')+'</td><td>'+(r.aprRF?'Aprovado (RF)':r.repRF?'<span class="tag" style="background:var(--bad);color:var(--prx)">Reprovado</span>':r.rf?'<span class="tag" style="background:var(--bad);color:var(--prx)">RF</span>':r.ok?'Aprovado'+(r.bp<4?' ('+r.bp+'º bim.)':''):r.lan?'Em andamento':'–')+'</td></tr>';
+  });
+  $("main").innerHTML=h+'</tbody></table></div>';
+  $("esc").onchange=ev=>{S.escala=+ev.target.value;save();render();};
+}
+function renderAnualOld(t){
+  let h=`<div class="scroll"><table><thead><tr><th>#</th><th class="l">Aluno</th><th>1º Bim</th><th>2º Bim</th><th>3º Bim</th><th>4º Bim</th><th>Média<small>bim. lançados</small></th></tr></thead><tbody>`;
+  vis(t).forEach(([a,i])=>{
+    const v=[1,2,3,4].map(b=>entered(a.n[b])?calc(a.n[b]).total:null), ok=v.filter(x=>x!==null);
+    const med=ok.length?ok.reduce((x,y)=>x+y,0)/ok.length:null;
+    h+=`<tr><td class="n">${i+1}</td><td class="l">${esc(a.nome)}</td>`+v.map(x=>`<td class="${x!==null&&x<6?"tot bad":""}">${x===null?"–":fmt(x)}</td>`).join("")+`<td class="tot ${med===null?"":med<6?"bad":"ok"}">${med===null?"–":fmt(med)}</td></tr>`;
+  });
+  $("main").innerHTML=h+"</tbody></table></div>";
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener("input",e=>{
+  const el=e.target; if(RO||!el.closest("#tb"))return;
+  const tr=el.closest("tr"), a=turma().alunos.find(x=>x.id===tr.dataset.id), k=el.dataset.k;
+  if(k==="nome"){a.nome=el.value;save();return;}
+  let n=num(el.value);
+  if(n!==null){ if(n<0)n=0; if(n>MAX[k]){n=MAX[k];el.value=n;} }
+  (a.n[view]=a.n[view]||{})[k]=n===null?"":String(n);
+  refreshRow(tr,a); stats(); save();
+});
+document.addEventListener("click",e=>{
+  const tab=e.target.closest(".tab"); if(tab){view=(tab.dataset.v==="a"||tab.dataset.v==="r")?tab.dataset.v:+tab.dataset.v;render();return;}
+  const d=e.target.closest("[data-del]"); if(d){
+    const t=turma(),a=t.alunos.find(x=>x.id===d.dataset.del);
+    ask({title:"Remover aluno",text:`Remover ${a.nome} e todas as notas dele(a)?`,ok:"Remover",onOk:()=>{t.alunos=t.alunos.filter(x=>x!==a);save();render();}});
+  }
+});
+$("turma").onchange=e=>{S.atual=e.target.value;save();render();};
+$("busca").addEventListener("input",e=>{busca=e.target.value;render();});
+function novaTurma(){ask({title:"Nova turma",text:"Ex.: 7º A",field:"line",ok:"Criar",onOk:v=>{v=v.trim();if(!v)return false;const t={id:uid(),nome:v,alunos:[]};S.turmas.push(t);S.atual=t.id;save();render();}});}
+$("bNova").onclick=novaTurma;
+$("bRen").onclick=()=>ask({title:"Renomear turma",field:"line",value:turma().nome,onOk:v=>{v=v.trim();if(!v)return false;turma().nome=v;save();render();}});
+$("bDel").onclick=()=>ask({title:"Excluir turma",text:`Excluir ${turma().nome} com todos os alunos e notas?`,ok:"Excluir",onOk:()=>{S.turmas=S.turmas.filter(t=>t!==turma());S.atual=S.turmas[0]?.id||null;save();render();}});
+$("bAdd").onclick=()=>ask({title:"Adicionar aluno",field:"line",ok:"Adicionar",onOk:v=>{v=v.trim();if(!v)return false;turma().alunos.push({id:uid(),nome:v,n:blank()});busca="";$("busca").value="";save();render();}});
+
+/* ---------- importar PDF ---------- */
+const PART=new Set(["da","de","do","das","dos","e"]);
+function titulo(s){return s===s.toUpperCase()?s.toLowerCase().split(/\s+/).map((w,i)=>i&&PART.has(w)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(" "):s;}
+const SKIP=/^(n[ºo°.]|nome|aluno|alunos|lista|turma|escola|ano|s[ée]rie|professor|prof|data|p[áa]gina|matr[ií]cula|di[aá]rio|estudante|chamada|total|turno|bimestre|disciplina|rg|situa[çc][ãa]o)\b/i;
+const MATR=/matriculad[oa]/i, NAOMATR=/n[ãa]o\s+matriculad|cancelad|transferid|remanejad|abandon|evadid|desistent|falecid|trancad|baixad/i;
+function limpa(p){
+  p=p.replace(/\d{1,2}\/\d{1,2}\/\d{2,4}/g," ").replace(/^\s*\d+\s*[.\-–)]*\s*/,"");
+  const toks=[];
+  for(const w of p.split(/\s+/)){ if(!w)continue; if(!/^\p{L}[\p{L}'’\-]*$/u.test(w))break; toks.push(w); }
+  while(toks.length&&toks[toks.length-1].length<2)toks.pop();
+  return toks.join(" ");
+}
+function nome(l){
+  const [a,...r]=l.split(MATR);
+  for(const p of [a,r.join(" ")]){
+    const n=limpa(p);
+    if(n.split(" ").length>=2&&n.length>=4&&!SKIP.test(n))return n;
+  }
+  return null;
+}
+function parseNomes(linhas){
+  const temSit=linhas.some(l=>MATR.test(l)||NAOMATR.test(l));
+  const ok=[]; let ignorados=0;
+  for(const l of linhas){
+    const mat=MATR.test(l)&&!NAOMATR.test(l);
+    if(temSit&&!mat){ if(nome(l)&&NAOMATR.test(l))ignorados++; continue; }
+    const n=nome(l); if(n)ok.push(titulo(n));
+  }
+  return {nomes:[...new Set(ok)],ignorados,temSit};
+}
+async function lerPdf(file,sep=" "){
+  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise, linhas=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    const tc=await (await pdf.getPage(p)).getTextContent(), rows={};
+    tc.items.forEach(it=>{if(!it.str.trim())return;const y=Math.round(it.transform[5]/3);(rows[y]=rows[y]||[]).push([it.transform[4],it.str,it.width||0]);});
+    Object.keys(rows).map(Number).sort((a,b)=>b-a).forEach(y=>linhas.push(rows[y].sort((a,b)=>a[0]-b[0]).reduce((s,x,i,arr)=>i?s+(sep!==" "&&x[0]-(arr[i-1][0]+arr[i-1][2])>8?sep:" ")+x[1]:x[1],"")));
+  }
+  return linhas;
+}
+function revisar(nomes,aviso){
+  const t=turma();
+  if(!t||!t.alunos.length||!nomes.length){revisar0(nomes,aviso);return;}
+  const usados=new Set(), novos=[];
+  nomes.forEach(n=>{const a=acha(t,n); if(a)usados.add(a); else if(!novos.some(x=>norm(x)===norm(n)))novos.push(n);});
+  const ausentes=t.alunos.filter(a=>!usados.has(a));
+  if(!novos.length&&!ausentes.length){ask({title:"Lista j\u00e1 est\u00e1 atualizada",text:"Os "+usados.size+" alunos do PDF j\u00e1 est\u00e3o na turma. Nada a alterar."});return;}
+  ask({title:"Atualizar lista da turma",
+    text:(aviso?aviso+" ":"")+usados.size+" aluno(s) do PDF j\u00e1 est\u00e3o na turma. Marque o que deseja aplicar."+(ausentes.length>t.alunos.length/2?" Aten\u00e7\u00e3o: muitos alunos da turma n\u00e3o constam no PDF. Confira se \u00e9 a lista da turma certa.":""),
+    ok:"Aplicar altera\u00e7\u00f5es",
+    extra:b=>{
+      const mk=(tit,arr,marcado,g)=>{
+        if(!arr.length)return;
+        const h=document.createElement("p"); h.style.cssText="font-weight:600;color:var(--tx);margin:8px 0 4px"; h.textContent=tit; b.appendChild(h);
+        const box=document.createElement("div"); box.style.cssText="max-height:150px;overflow:auto;font-size:14px";
+        arr.forEach((x,i)=>{const l=document.createElement("label"); l.style.cssText="display:flex;gap:8px;align-items:center;padding:2px 0"; const c=document.createElement("input"); c.type="checkbox"; c.checked=marcado; c.dataset.g=g; c.dataset.i=i; l.append(c,typeof x==="string"?x:x.nome); box.appendChild(l);});
+        b.appendChild(box);
+      };
+      mk("Novos alunos a adicionar ("+novos.length+")",novos,true,"add");
+      mk("N\u00e3o constam mais no PDF ("+ausentes.length+"). Remover apaga as notas do aluno",ausentes,false,"del");
+    },
+    onOk:()=>{
+      const sel=g=>[...document.querySelectorAll('#dB input[data-g="'+g+'"]')].filter(c=>c.checked).map(c=>+c.dataset.i);
+      sel("add").forEach(i=>t.alunos.push({id:uid(),nome:novos[i],n:blank()}));
+      const rem=new Set(sel("del").map(i=>ausentes[i]));
+      t.alunos=t.alunos.filter(a=>!rem.has(a));
+      t.alunos.sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"));
+      save(); render();
+    }});
+}
+function revisar0(nomes,aviso){
+  ask({title:`Alunos encontrados: ${nomes.length}`,text:aviso||"Revise a lista (um nome por linha), corrija ou apague o que não for aluno e confirme.",field:"area",value:nomes.join("\n"),ok:"Adicionar à turma",onOk:v=>{
+    const t=turma(), ja=new Set(t.alunos.map(a=>a.nome.toLowerCase()));
+    v.split("\n").map(s=>s.trim()).filter(s=>s&&!ja.has(s.toLowerCase())).forEach(n=>{ja.add(n.toLowerCase());t.alunos.push({id:uid(),nome:n,n:blank()});});
+    t.alunos.sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"));save();render();}});
+}
+$("bPdf").onclick=()=>$("file").click();
+$("file").onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f)return;
+  try{
+    if(typeof pdfjsLib==="undefined")throw new Error("lib");
+    const r=parseNomes(await lerPdf(f)), nomes=r.nomes;
+    const aviso=nomes.length
+      ?(r.temSit?`Considerei apenas alunos com situação “Matriculado” (${r.ignorados} ignorado${r.ignorados===1?"":"s"}). Revise e confirme.`:"O PDF não traz a situação do aluno, então listei todos os nomes. Apague quem não estiver matriculado.")
+      :(r.temSit?"Nenhum aluno com situação “Matriculado” foi encontrado. Cole os nomes abaixo, um por linha.":"Não encontrei texto no PDF (pode ser um documento escaneado). Cole os nomes abaixo, um por linha.");
+    revisar(nomes,aviso);
+  }catch(err){revisar([],"Não consegui ler o PDF. Cole os nomes abaixo, um por linha.");}
+};
+
+/* ---------- importar notas ---------- */
+function parseNotas(linhas){
+  const out=[];
+  for(const l of linhas){
+    const toks=l.replace(MATR," ").replace(/\d{1,2}\/\d{1,2}\/\d{2,4}/g," ").replace(/^\s*\d+\s*[.\-–)]*\s*/,"").split(/\s+/).filter(Boolean), nm=[];
+    let i=0;
+    for(;i<toks.length&&/^\p{L}[\p{L}'’\-]*$/u.test(toks[i]);i++)nm.push(toks[i]);
+    const nums=toks.slice(i).map(w=>/^\d+(?:[.,]\d+)?$/.test(w)?parseFloat(w.replace(",",".")):/^[-–—]+$/.test(w)?null:undefined).filter(x=>x!==undefined);
+    if(nm.length>=2&&nums.some(x=>x!==null))out.push({nome:nm.join(" "),nums});
+  }
+  return out;
+}
+function acha(t,nm){
+  const P=new Set(["da","de","do","das","dos","e"]);
+  const tk=s=>norm(s).replace(/[^a-z\s]/g," ").split(/\s+/).filter(w=>w&&!P.has(w));
+  const a=tk(nm); if(!a.length)return null;
+  let best=null,bs=0,second=0;
+  for(const x of t.alunos){
+    const b=tk(x.nome), c=a.filter(w=>b.includes(w)).length, sc=c/Math.max(a.length,b.length);
+    if(sc>bs){second=bs;bs=sc;best=x;}else if(sc>second)second=sc;
+  }
+  return best&&bs>=0.6&&bs>second?best:null;
+}
+function acha0(t,nm){
+  const n=norm(nm), ex=t.alunos.find(x=>norm(x.nome)===n); if(ex)return ex;
+  const tk=n.split(" "), c=t.alunos.filter(x=>{const m=norm(x.nome).split(" ");return tk.every(w=>m.includes(w))||m.every(w=>tk.includes(w));});
+  return c.length===1?c[0]:null;
+}
+$("bNotas").onclick=()=>$("fileN").click();
+$("fileN").onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f)return;
+  let linhas;
+  try{ if(typeof pdfjsLib==="undefined")throw 0; linhas=parseNotas(await lerPdf(f)); }
+  catch(err){ ask({title:"Importar notas",text:"Não consegui ler o PDF (pode ser um documento escaneado)."}); return; }
+  const t=turma(), achados=[], fora=[];
+  linhas.forEach(l=>{const a=acha(t,l.nome); a?achados.push([a,l.nums]):fora.push(titulo(l.nome));});
+  ask({title:"Notas encontradas: "+achados.length+" aluno(s)",
+    text:"Só alunos já cadastrados nesta turma são considerados."+(fora.length?" Ignorados (não cadastrados): "+fora.slice(0,6).join(", ")+(fora.length>6?"…":"")+".":""),
+    ok:"Importar notas",
+    extra:b=>{b.innerHTML='<p>Bimestre: <select id="iB">'+[1,2,3,4].map(x=>'<option value="'+x+'"'+(x===view?' selected':'')+'>'+x+'º Bimestre</option>').join('')+'</select></p><p>Colunas do PDF, da esquerda para a direita: <select id="iL"><option value="ac,ae,ab,rp">AC, AE, AB, RP</option><option value="ac,ae,ab">AC, AE, AB</option><option value="ac,ae,ab,-">AC, AE, AB, Total (ignora o total)</option></select></p>';},
+    onOk:()=>{
+      if(!achados.length)return;
+      const b=+$("iB").value, cols=$("iL").value.split(",");
+      achados.forEach(([a,nums])=>{
+        const r=(a.n[b]=a.n[b]||{});
+        cols.forEach((k,i)=>{ if(k==="-"||nums[i]===undefined||nums[i]===null)return; r[k]=String(Math.min(nums[i],MAX[k])); });
+        if(num(r.ab)!==null&&num(r.ab)>=3)r.rp="";
+      });
+      view=b; save(); render();
+    }});
+};
+
+/* ---------- exportar PDF ---------- */
+function listaRP(t,b){return t.alunos.filter(a=>calc(a.n[b]).needRP).map(a=>{const r=a.n[b]||{};return [a.nome,fmt(num(r.ac)||0),fmt(num(r.ae)||0),fmt(num(r.ab))];});}
+function listaRF(t){const e=S.escala||1;return t.alunos.filter(a=>anual(a).rf).map(a=>{const r=anual(a);return [a.nome,...r.v.map(x=>fmt(x*e)),fmt(r.soma*e)];});}
+function gerarPdf(ti,secoes,cols,larg){
+  const d=new window.jspdf.jsPDF(); let y=18;
+  const nova=()=>{d.addPage();y=18;};
+  const linha=(vals,neg)=>{let x=14;d.setFont("helvetica",neg?"bold":"normal");vals.forEach((v,i)=>{if(i<2)d.text(String(v),x,y);else d.text(String(v),x+larg[i]/2,y,{align:"center"});x+=larg[i];});y+=6.5;};
+  d.setFontSize(15);d.setFont("helvetica","bold");d.setTextColor(20);d.text(ti,14,y);y+=6;
+  d.setFontSize(9);d.setFont("helvetica","normal");d.setTextColor(110);d.text("Gerado em "+new Date().toLocaleDateString("pt-BR"),14,y);y+=9;
+  secoes.forEach(s=>{
+    if(y>250)nova();
+    d.setFontSize(12);d.setFont("helvetica","bold");d.setTextColor(20);d.text(s.nome+" - "+s.linhas.length+" aluno(s)",14,y);y+=7;
+    d.setFontSize(9.5);d.setTextColor(90);linha(cols,true);d.setDrawColor(180);d.line(14,y-4.8,196,y-4.8);d.setTextColor(20);
+    if(!s.linhas.length){d.setFont("helvetica","italic");d.text("Nenhum aluno nesta situação.",14,y);y+=10;return;}
+    s.linhas.forEach((r,i)=>{if(y>282){nova();d.setFontSize(9.5);d.setTextColor(20);} linha([i+1,...r]);});
+    y+=6;
+  });
+  return d.output("arraybuffer");
+}
+async function baixar(buf,nome){
+  const url=URL.createObjectURL(new Blob([buf],{type:"application/pdf"}));
+  const a=document.createElement("a"); a.href=url; a.download=nome; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
+}
+$("bExp").onclick=()=>{
+  const rf=view==="a"||view==="r";
+  ask({title:rf?"Exportar alunos em RF":"Exportar alunos com RP",ok:"Gerar PDF",
+    extra:b=>{b.innerHTML='<p>Turmas: <select id="xT"><option value="1">Somente '+esc(turma().nome)+'</option>'+(S.turmas.length>1?'<option value="*">Todas as turmas</option>':'')+'</select></p>'+(rf?'':'<p>Bimestre: <select id="xB">'+[1,2,3,4].map(x=>'<option value="'+x+'"'+(x===view?' selected':'')+'>'+x+'º Bimestre</option>').join('')+'</select></p>');},
+    onOk:()=>{
+      try{
+        const lista=$("xT").value==="*"?S.turmas:[turma()], b=rf?0:+$("xB").value, e=S.escala||1;
+        const secoes=lista.map(t=>({nome:t.nome,linhas:rf?listaRF(t):listaRP(t,b)}));
+        const buf=rf?gerarPdf("Alunos em Recuperação Final (RF) - soma anual abaixo de "+(24*e),secoes,["#","Aluno","1º Bim","2º Bim","3º Bim","4º Bim","Total"],[10,70,20,20,20,20,22])
+          :gerarPdf("Alunos que precisam de RP - "+b+"º Bimestre",secoes,["#","Aluno","AC","AE","AB"],[10,100,24,24,24]);
+        baixar(buf,rf?"alunos-RF.pdf":"alunos-RP-"+b+"-bimestre.pdf");
+      }catch(err){setTimeout(()=>ask({title:"Erro",text:"Não consegui gerar o PDF. Tente novamente."}),0);}
+    }});
+};
+
+/* ---------- modelo Quadro de notas (Diario Eletronico) ---------- */
+async function itensPdf(f){
+  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise, pgs=[];
+  for(let p=1;p<=pdf.numPages;p++){const tc=await (await pdf.getPage(p)).getTextContent(); pgs.push(tc.items.map(i=>i.str.trim()).filter(Boolean));}
+  return pgs;
+}
+function parseQuadro(pgs){
+  const rows=[], NUM=/^(\d+[.,]\d+|\d+|-)$/;
+  for(const items of pgs){
+    const toks=items.flatMap(s=>s.split(/\s+/)).filter(Boolean);
+    let cur=null, ready=false;
+    for(let i=0;i<toks.length;i++){
+      const w=toks[i], nx=toks[i+1]||"";
+      if(/^Estudante$/i.test(w)){cur=null;ready=true;continue;}
+      if(!ready)continue;
+      if(/^\d{1,3}$/.test(w)&&/\p{L}/u.test(nx)&&(!cur||cur.nums.length>=10)){cur={n:+w,nome:[],nums:[]};rows.push(cur);continue;}
+      if(!cur)continue;
+      if(/\p{L}/u.test(w)){if(!cur.nums.length)cur.nome.push(w);continue;}
+      if(NUM.test(w)&&cur.nums.length<14)cur.nums.push(w);
+    }
+  }
+  return rows.map(r=>({n:r.n,nome:r.nome.join(" "),nums:r.nums}));
+}
+async function tentaQuadro(f,t){
+  let rows;
+  try{ rows=parseQuadro(await itensPdf(f)); }catch(e){ return false; }
+  if(!rows.length)return false;
+  const achados=[], fora=[], irr=[];
+  rows.forEach(r=>{
+    const a=acha(t,r.nome);
+    if(!a){fora.push(titulo(r.nome));return;}
+    if(r.nums.length!==14){irr.push(a.nome);return;}
+    if(achados.some(x=>x[0]===a))return;
+    achados.push([a,[0,2,4,6].map(i=>{const w=r.nums[i]; if(!/\d/.test(w))return null; const n=parseFloat(w.replace(",",".")); return n>=0&&n<=10?n:null;})]);
+  });
+  const tem=[0,1,2,3].map(i=>achados.some(x=>x[1][i]!==null));
+  if(!achados.length||!tem.some(Boolean)){
+    ask({title:"Importar notas",text:"Li "+rows.length+" aluno(s) no PDF, mas nenhum nome bateu com os alunos cadastrados nesta turma"+(fora.length?" (ex.: "+fora.slice(0,4).join(", ")+")":"")+". Confira se a turma selecionada \u00e9 a mesma do PDF."});
+    return true;
+  }
+  const temComp=x=>["ac","ae","ab","rp"].some(k=>x&&x[k]!==undefined&&x[k]!=="");
+  const ausentes=t.alunos.filter(a=>!achados.some(x=>x[0]===a)).length;
+  ask({title:"Notas encontradas: "+achados.length+" aluno(s)",
+    text:"Modelo \u201cQuadro de notas\u201d reconhecido. Os nomes foram comparados com os alunos cadastrados nesta turma, sem diferenciar mai\u00fasculas e acentos. Esse PDF traz s\u00f3 a nota total de cada bimestre (sem AC, AE e AB). Bimestres que j\u00e1 t\u00eam AC, AE ou AB lan\u00e7ados s\u00e3o mantidos."+(fora.length?" Alunos do PDF sem cadastro na turma (ignorados): "+fora.slice(0,6).join(", ")+(fora.length>6?"\u2026":"")+".":"")+(ausentes?" Cadastrados que n\u00e3o aparecem no PDF: "+ausentes+".":"")+(irr.length?" Linhas com formato inesperado (ignoradas): "+irr.slice(0,4).join(", ")+".":""),
+    ok:"Importar notas",
+    extra:b=>{
+      const p=document.createElement("p"); p.append("Bimestres a importar: ");
+      [1,2,3,4].forEach(x=>{ if(!tem[x-1])return; const l=document.createElement("label"); l.style.marginRight="12px"; const c=document.createElement("input"); c.type="checkbox"; c.checked=true; c.dataset.b=x; l.append(c," "+x+"\u00ba"); p.append(l); });
+      b.appendChild(p);
+      const box=document.createElement("div"); box.style.cssText="max-height:180px;overflow:auto;font-size:13px";
+      achados.forEach(([a,v])=>{const d=document.createElement("div"); d.textContent=a.nome+": "+v.map((n,i)=>(i+1)+"\u00ba "+(n===null?"\u2013":fmt(n))).join(" \u00b7 "); box.appendChild(d);});
+      b.appendChild(box);
+    },
+    onOk:()=>{
+      const sel=[...document.querySelectorAll('#dB input[data-b]')].filter(c=>c.checked).map(c=>+c.dataset.b);
+      achados.forEach(([a,v])=>sel.forEach(bm=>{
+        if(v[bm-1]===null)return;
+        const x=(a.n[bm]=a.n[bm]||{});
+        if(temComp(x))return;
+        x.tot=String(v[bm-1]);
+      }));
+      if(sel.length)view=sel[0];
+      save(); render();
+    }});
+  return true;
+}
+
+/* ---------- importacao com IA ---------- */
+let IA=null;
+(async()=>{ try{ IA=await claude.use("sample"); }catch(e){ IA=null; } })();
+const oldFile=$("file").onchange, oldFileN=$("fileN").onchange;
+const falso=f=>({target:{files:[f],value:""}});
+async function textoPdf(f){ return (await lerPdf(f," | ")).join("\n").slice(0,200000); }
+$("file").onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f)return;
+  if(!IA||typeof pdfjsLib==="undefined"){oldFile(falso(f));return;}
+  ask({title:"Lendo a lista com IA\u2026",text:"Isso pode levar alguns segundos."});
+  try{
+    const txt=await textoPdf(f);
+    if(!txt.trim())throw new Error("vazio");
+    const o=await IA.json('Voc\u00ea recebe o texto extra\u00eddo de um PDF com a lista de alunos de uma turma escolar brasileira. As colunas de cada linha podem estar separadas por " | ".\n\nTarefa: devolva os nomes completos dos alunos com situa\u00e7\u00e3o "Matriculado" ou "Matriculada". Ignore alunos transferidos, remanejados, cancelados, evadidos, em abandono, falecidos ou com qualquer outra situa\u00e7\u00e3o. Se o documento n\u00e3o tiver coluna de situa\u00e7\u00e3o, inclua todos os alunos. N\u00e3o inclua cabe\u00e7alhos, n\u00fameros de chamada, datas, sexo, turma ou outras colunas. Escreva cada nome em formato de t\u00edtulo (Maria da Silva). N\u00e3o invente nomes.\n\nResponda SOMENTE com JSON neste formato: {"temSituacao":true,"ignorados":2,"alunos":["Nome Completo"]}\n\nTEXTO DO PDF:\n'+txt);
+    $("dlg").close();
+    const nomes=[...new Set((Array.isArray(o.alunos)?o.alunos:[]).map(s=>String(s).trim()).filter(Boolean))];
+    revisar(nomes,nomes.length?"Lista lida com IA"+(o.temSituacao?", considerando s\u00f3 alunos matriculados"+(o.ignorados?" ("+o.ignorados+" ignorado(s))":""):" (o PDF n\u00e3o traz a situa\u00e7\u00e3o, ent\u00e3o listei todos)")+". Revise e confirme.":"A IA n\u00e3o encontrou alunos nesse PDF. Cole os nomes abaixo, um por linha.");
+  }catch(err){ $("dlg").close(); oldFile(falso(f)); }
+};
+$("fileN").onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f)return;
+  const t=turma();
+  if(typeof pdfjsLib!=="undefined"&&t.alunos.length&&await tentaQuadro(f,t))return;
+  if(!IA||typeof pdfjsLib==="undefined"||!t.alunos.length){oldFileN(falso(f));return;}
+  ask({title:"Lendo as notas com IA\u2026",text:"Isso pode levar alguns segundos."});
+  let o;
+  try{
+    const txt=await textoPdf(f);
+    if(!txt.trim())throw new Error("vazio");
+    o=await IA.json('Voc\u00ea recebe o texto extra\u00eddo de um PDF com notas de alunos de uma turma escolar brasileira. As colunas de cada linha podem estar separadas por " | ".\n\nALUNOS CADASTRADOS NO DI\u00c1RIO (use exatamente estes nomes):\n'+t.alunos.map(a=>a.nome).join('\n')+'\n\nTarefa: para cada aluno CADASTRADO que aparece no PDF, extraia as notas AC (Atividade em Classe, m\u00e1x. 3), AE (Atividade Extraclasse, m\u00e1x. 2), AB (Avalia\u00e7\u00e3o Bimestral, m\u00e1x. 5) e RP (Recupera\u00e7\u00e3o Paralela, m\u00e1x. 5). Identifique as colunas pelo cabe\u00e7alho do PDF; se n\u00e3o houver cabe\u00e7alho, assuma a ordem AC, AE, AB, RP. Ignore colunas de total, m\u00e9dia, faltas ou situa\u00e7\u00e3o. V\u00edrgula decimal vira ponto (2,5 vira 2.5). C\u00e9lula vazia, tra\u00e7o ou ausente vira null. Compare os nomes sem diferenciar acentos, mai\u00fasculas ou abrevia\u00e7\u00f5es, mas s\u00f3 associe quando tiver certeza de que \u00e9 o mesmo aluno. NUNCA invente alunos nem notas. Quem n\u00e3o est\u00e1 na lista de cadastrados vai em naoEncontrados. Se o PDF indicar o bimestre, informe em bimestre (1 a 4), sen\u00e3o null.\n\nResponda SOMENTE com JSON neste formato: {"bimestre":2,"alunos":[{"nome":"Nome exatamente como cadastrado","ac":2.5,"ae":null,"ab":4,"rp":null}],"naoEncontrados":["Nome no PDF"]}\n\nTEXTO DO PDF:\n'+txt);
+    if(!o||!Array.isArray(o.alunos))throw new Error("formato");
+  }catch(err){ $("dlg").close(); oldFileN(falso(f)); return; }
+  $("dlg").close();
+  const achados=[], fora=(Array.isArray(o.naoEncontrados)?o.naoEncontrados:[]).map(String);
+  o.alunos.forEach(r=>{const nm=String(r&&r.nome||""), a=acha(t,nm); if(a&&!achados.some(x=>x[0]===a))achados.push([a,r]); else if(!a)fora.push(nm);});
+  if(!achados.length){ ask({title:"Importar notas",text:"N\u00e3o encontrei notas de alunos cadastrados neste PDF."+(fora.length?" Nomes n\u00e3o reconhecidos: "+fora.slice(0,6).join(", ")+".":"")}); return; }
+  const bi=[1,2,3,4].includes(+o.bimestre)?+o.bimestre:(typeof view==="number"?view:1);
+  ask({title:"Notas encontradas: "+achados.length+" aluno(s)",
+    text:"Lidas com IA. S\u00f3 alunos j\u00e1 cadastrados nesta turma s\u00e3o considerados. Confira os valores antes de importar."+(fora.length?" Ignorados (n\u00e3o cadastrados): "+fora.slice(0,6).join(", ")+(fora.length>6?"\u2026":"")+".":""),
+    ok:"Importar notas",
+    extra:b=>{
+      b.innerHTML='<p>Bimestre: <select id="iB">'+[1,2,3,4].map(x=>'<option value="'+x+'"'+(x===bi?' selected':'')+'>'+x+'\u00ba Bimestre</option>').join('')+'</select></p>';
+      const box=document.createElement("div"); box.style.cssText="max-height:180px;overflow:auto;font-size:13px";
+      achados.forEach(([a,r])=>{const d=document.createElement("div"); d.textContent=a.nome+": "+["ac","ae","ab","rp"].map(k=>k.toUpperCase()+" "+(num(r[k])===null?"\u2013":fmt(num(r[k])))).join(" \u00b7 "); box.appendChild(d);});
+      b.appendChild(box);
+    },
+    onOk:()=>{
+      const b=+$("iB").value;
+      achados.forEach(([a,r])=>{
+        const x=(a.n[b]=a.n[b]||{});
+        ["ac","ae","ab","rp"].forEach(k=>{const v=num(r[k]); if(v===null)return; x[k]=String(Math.min(Math.max(v,0),MAX[k]));});
+        if(num(x.ab)!==null&&num(x.ab)>=3)x.rp="";
+      });
+      view=b; save(); render();
+    }});
+};
+
+/* ---------- sincronizacao com Google Drive ---------- */
+const SKEY="assistente-sync", ESC="https://www.googleapis.com/auth/drive.file", ARQ="assistente-escolar-dados.json";
+let SY={cid:"",on:false,fileId:"",ver:"",dirty:false,granted:false,ts:0};
+try{const r=localStorage.getItem(SKEY); if(r)SY=Object.assign(SY,JSON.parse(r));}catch(e){}
+const saveSY=()=>{try{localStorage.setItem(SKEY,JSON.stringify(SY));}catch(e){}};
+let tok="", tokExp=0, tSync=null, busy=false;
+const tokenOk=()=>!!tok&&Date.now()<tokExp-60000;
+const docSync=()=>({app:"assistente-escolar",v:1,salvoEm:Date.now(),dados:S});
+function stSy(t,cor){
+  const b=$("bNuvem"); if(b){b.title=t;b.style.color=cor||"";}
+  const g=document.getElementById("gdT"); if(g)g.textContent=t;
+}
+function erroSy(e){
+  const c=e&&e.code?String(e.code):(e instanceof TypeError?"offline":"erro");
+  if(c==="gesto"||c==="popup_failed_to_open"||c==="popup_closed")return "Toque em \u2601 para reconectar ao Google Drive.";
+  if(c==="sem_cid")return "Informe o Client ID do Google (veja o LEIAME).";
+  if(c==="sem_gsi"||c==="gsi")return "N\u00e3o consegui carregar o login do Google. Verifique a internet.";
+  if(c==="offline")return "Sem conex\u00e3o. O app tenta de novo quando a internet voltar.";
+  if(c==="access_denied")return "O acesso ao Google Drive foi negado.";
+  if(c==="http_403"||c==="http_401")return "O Google recusou o acesso. Confira se a Drive API est\u00e1 ativada e se o Client ID aceita este endere\u00e7o.";
+  if(c==="formato")return "O arquivo do Drive n\u00e3o tem o formato do Assistente Escolar.";
+  return "Falha ao sincronizar ("+c+").";
+}
+function pedeToken(int){
+  return new Promise((res,rej)=>{
+    if(tokenOk())return res(tok);
+    if(!int)return rej({code:"gesto"});
+    if(!SY.cid)return rej({code:"sem_cid"});
+    if(!window.google||!google.accounts||!google.accounts.oauth2)return rej({code:"sem_gsi"});
+    try{
+      google.accounts.oauth2.initTokenClient({client_id:SY.cid,scope:ESC,
+        callback:r=>{ if(r.error)return rej({code:r.error}); tok=r.access_token; tokExp=Date.now()+(+r.expires_in||3600)*1000; SY.granted=true; saveSY(); res(tok); },
+        error_callback:e=>rej({code:(e&&e.type)||"popup"})
+      }).requestAccessToken({prompt:SY.granted?"":"consent"});
+    }catch(e){rej({code:"gsi"});}
+  });
+}
+async function api(url,opt,int){
+  const t=await pedeToken(int);
+  const r=await fetch(url,Object.assign({},opt,{headers:Object.assign({Authorization:"Bearer "+t},(opt&&opt.headers)||{})}));
+  if(r.status===401){tok="";throw {code:"http_401"};}
+  if(!r.ok)throw {code:"http_"+r.status};
+  return r;
+}
+function multipart(meta,body){
+  const b="ae"+Date.now();
+  return {type:"multipart/related; boundary="+b,body:"--"+b+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n"+JSON.stringify(meta)+"\r\n--"+b+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n"+body+"\r\n--"+b+"--"};
+}
+async function listaDrive(q,int,n){
+  const r=await api("https://www.googleapis.com/drive/v3/files?q="+encodeURIComponent(q)+"&fields=files(id,name,version,modifiedTime)&orderBy=modifiedTime%20desc&pageSize="+(n||10),null,int);
+  return (await r.json()).files||[];
+}
+async function criaArquivo(nome,body,int){
+  const m=multipart({name:nome,mimeType:"application/json"},body);
+  const r=await api("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,version",{method:"POST",headers:{"Content-Type":m.type},body:m.body},int);
+  return r.json();
+}
+async function atualizaArquivo(id,body,int){
+  const r=await api("https://www.googleapis.com/upload/drive/v3/files/"+id+"?uploadType=media&fields=id,version",{method:"PATCH",headers:{"Content-Type":"application/json"},body},int);
+  return r.json();
+}
+async function baixaArquivo(id,int){return (await api("https://www.googleapis.com/drive/v3/files/"+id+"?alt=media",null,int)).json();}
+async function versaoRemota(id,int){return (await (await api("https://www.googleapis.com/drive/v3/files/"+id+"?fields=version",null,int)).json()).version;}
+function aplicaRemoto(doc){
+  const d=doc&&doc.dados; if(!d||!Array.isArray(d.turmas))throw {code:"formato"};
+  try{localStorage.setItem("assistente-pre-sync",JSON.stringify(S));}catch(e){}
+  S=d; if(!turma())S.atual=S.turmas[0]?S.turmas[0].id:null;
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  render();
+}
+async function empurra(int){
+  const r=await atualizaArquivo(SY.fileId,JSON.stringify(docSync()),int);
+  SY.ver=r.version; SY.dirty=false;
+}
+async function puxa(id,ver,int){
+  aplicaRemoto(await baixaArquivo(id,int));
+  SY.fileId=id; SY.ver=ver; SY.dirty=false;
+}
+async function sincroniza(int){
+  if(busy||!SY.cid)return; busy=true; stSy("Sincronizando\u2026");
+  try{
+    let f=null;
+    if(SY.fileId){
+      try{f={id:SY.fileId,version:await versaoRemota(SY.fileId,int)};}
+      catch(e){ if(e.code==="http_404"){SY.fileId="";SY.ver="";}else throw e; }
+    }
+    if(!f){const l=await listaDrive("name='"+ARQ+"' and trashed=false",int,1); if(l[0]){f={id:l[0].id,version:l[0].version};SY.fileId=l[0].id;}}
+    if(!f){
+      const r=await criaArquivo(ARQ,JSON.stringify(docSync()),int); SY.fileId=r.id; SY.ver=r.version; SY.dirty=false;
+    }else if(!SY.ver){
+      if(!S.turmas.length)await puxa(f.id,f.version,int); else conflito(f);
+    }else if(SY.ver===f.version){
+      if(SY.dirty)await empurra(int);
+    }else{
+      if(!SY.dirty)await puxa(f.id,f.version,int); else conflito(f);
+    }
+    SY.ts=Date.now(); saveSY(); stSy("\u2601 Sincronizado em "+new Date(SY.ts).toLocaleString("pt-BR"),"var(--ok)");
+  }catch(e){ stSy(erroSy(e),"var(--bad)"); }
+  busy=false;
+}
+function conflito(f){
+  ask({title:"Dados diferentes no Drive",text:"Este aparelho e o Google Drive t\u00eam dados diferentes. Qual vers\u00e3o deseja manter? Uma c\u00f3pia dos dados substitu\u00eddos fica guardada neste aparelho.",ok:"Usar os dados do Drive",
+    extra:b=>{b.innerHTML='<button id="cfL">Manter os deste aparelho</button>';$("cfL").onclick=async()=>{$("dlg").close();try{SY.ver=f.version;await empurra(true);SY.ts=Date.now();saveSY();stSy("\u2601 Dados deste aparelho enviados ao Drive.","var(--ok)");}catch(e){stSy(erroSy(e),"var(--bad)");}};},
+    onOk:async()=>{try{await puxa(f.id,f.version,true);SY.ts=Date.now();saveSY();stSy("\u2601 Dados do Drive carregados.","var(--ok)");}catch(e){stSy(erroSy(e),"var(--bad)");}}});
+}
+function agendaAuto(){ if(!SY.on)return; SY.dirty=true; saveSY(); clearTimeout(tSync); tSync=setTimeout(()=>sincroniza(false),15000); }
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&SY.on&&tokenOk())sincroniza(false); });
+addEventListener("online",()=>{ if(SY.on&&SY.dirty&&tokenOk())sincroniza(false); });
+$("bNuvem").onclick=()=>{ if(!SY.cid){$("bBak").click();return;} SY.on=true; saveSY(); sincroniza(true); };
+if(SY.on)stSy("Toque em \u2601 para sincronizar com o Google Drive.");
+function syncUI(b){
+  const w=document.createElement("div"); w.style.marginTop="12px";
+  w.innerHTML='<p style="margin:0 0 6px"><b>Google Drive (sincroniza\u00e7\u00e3o entre aparelhos)</b></p><p style="margin:0 0 6px">Cole o Client ID do Google (passo a passo no LEIAME):</p><input type="text" id="syCid" placeholder="xxxx.apps.googleusercontent.com"><label style="display:flex;gap:8px;align-items:center;margin:10px 0"><input type="checkbox" id="syOn"><span>Sincronizar automaticamente ap\u00f3s cada altera\u00e7\u00e3o</span></label><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="sySy" class="pri">Conectar e sincronizar</button><button id="syCp">Salvar c\u00f3pia datada</button><button id="syRs">Restaurar c\u00f3pia</button><button id="syOff">Desconectar</button></div><p id="gdT" style="margin:8px 0 0"></p><div id="gdL"></div>';
+  b.appendChild(w);
+  $("syCid").value=SY.cid; $("syOn").checked=SY.on;
+  $("sySy").onclick=()=>{ SY.cid=$("syCid").value.trim(); SY.on=$("syOn").checked; if(!SY.on&&!SY.cid){stSy(erroSy({code:"sem_cid"}));return;} SY.on=true; $("syOn").checked=true; saveSY(); sincroniza(true); };
+  $("syOff").onclick=()=>{ SY.on=false; SY.fileId=""; SY.ver=""; SY.granted=false; SY.dirty=false; tok=""; saveSY(); $("syOn").checked=false; stSy("Desconectado. Os dados continuam no aparelho e no arquivo do Drive."); };
+  $("syCp").onclick=async()=>{
+    SY.cid=$("syCid").value.trim(); const d=new Date(), p=n=>String(n).padStart(2,"0");
+    const nome="assistente-escolar-copia-"+d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"-"+p(d.getHours())+p(d.getMinutes())+".json";
+    stSy("Salvando c\u00f3pia\u2026");
+    try{await criaArquivo(nome,JSON.stringify(docSync()),true);stSy("\u2714 C\u00f3pia salva no Drive: "+nome);}catch(e){stSy(erroSy(e),"var(--bad)");}
+  };
+  $("syRs").onclick=async()=>{
+    SY.cid=$("syCid").value.trim(); const box=$("gdL"); box.innerHTML=""; stSy("Buscando c\u00f3pias\u2026");
+    try{
+      const l=await listaDrive("name contains 'assistente-escolar-copia' and trashed=false",true,8);
+      if(!l.length){stSy("Nenhuma c\u00f3pia datada encontrada.");return;}
+      stSy("Escolha a c\u00f3pia para restaurar (substitui os dados deste aparelho):");
+      l.forEach(f=>{const bt=document.createElement("button");bt.textContent=f.name+" \u00b7 "+new Date(f.modifiedTime).toLocaleString("pt-BR");bt.style.cssText="display:block;width:100%;text-align:left;margin-top:6px";
+        bt.onclick=async()=>{try{aplicaRemoto(await baixaArquivo(f.id,true));SY.dirty=true;saveSY();$("dlg").close();if(SY.on)sincroniza(true);}catch(e){stSy(erroSy(e),"var(--bad)");}};
+        box.appendChild(bt);});
+    }catch(e){stSy(erroSy(e),"var(--bad)");}
+  };
+}
+
+/* ---------- recuperacao final ---------- */
+function nRF(t){return t?t.alunos.filter(a=>anual(a).rf).length:0;}
+function statsRF(t){
+  return '<span>Em RF: <b>'+nRF(t)+'</b></span><span>Aprovados na RF: <b>'+t.alunos.filter(a=>anual(a).aprRF).length+'</b></span><span>Reprovados: <b>'+t.alunos.filter(a=>anual(a).repRF).length+'</b></span><span>Nota m\u00ednima para aprova\u00e7\u00e3o: <b>6,0</b> (de 0 a 10)</span>';
+}
+function resRF(tr,a){
+  const td=tr.querySelector(".res"), n=num(a.rec);
+  td.textContent=n===null?"Pendente":n>=6?"Aprovado":"Reprovado";
+  td.style.cssText="font-weight:700;color:"+(n===null?"var(--onv)":n>=6?"var(--ok)":"var(--bad)");
+}
+function renderRF(t){
+  const m=$("main"), e=S.escala||1;
+  if(!nRF(t)){m.innerHTML='<div class="empty">Nenhum aluno em Recupera\u00e7\u00e3o Final nesta turma.<br>Esta aba \u00e9 usada s\u00f3 por quem fechou os 4 bimestres com menos de 24 pontos.</div>';return;}
+  const lista=vis(t).filter(([a])=>anual(a).rf);
+  if(!lista.length){m.innerHTML='<div class="empty">Nenhum aluno em RF encontrado para \u201c'+esc(busca)+'\u201d.</div>';return;}
+  let h='<div class="stats">'+statsRF(t)+'</div><div class="scroll"><table><thead><tr><th>#</th><th class="l">Aluno</th><th>Total anual<small>soma dos 4 bim.</small></th><th>Nota da RF<small>0\u201310</small></th><th>Resultado</th></tr></thead><tbody id="tbrf">';
+  lista.forEach(([a,i])=>{
+    h+='<tr data-id="'+esc(a.id)+'"><td class="n">'+(i+1)+'</td><td class="l">'+esc(a.nome)+'</td><td>'+fmt(anual(a).soma*e)+'</td><td><input class="g" type="number" inputmode="decimal" step="0.1" min="0" max="10" data-rec="1" value="'+esc(a.rec||"")+'"></td><td class="res"></td></tr>';
+  });
+  m.innerHTML=h+'</tbody></table></div>';
+  $("tbrf").querySelectorAll("tr").forEach(tr=>resRF(tr,t.alunos.find(x=>x.id===tr.dataset.id)));
+}
+document.addEventListener("input",ev=>{
+  const el=ev.target; if(RO||!el.dataset||!el.dataset.rec)return;
+  const t=turma(), tr=el.closest("tr"), a=t&&t.alunos.find(x=>x.id===tr.dataset.id); if(!a)return;
+  let n=num(el.value); if(n!==null){ if(n<0)n=0; if(n>10){n=10;el.value=10;} }
+  a.rec=n===null?"":String(n); resRF(tr,a);
+  const st=$("main").querySelector(".stats"); if(st)st.innerHTML=statsRF(t);
+  save();
+});
+
+/* ---------- backup ---------- */
+$("bBak").onclick=()=>ask({title:"Backup dos dados",text:"Copie este texto para guardar uma c\u00f3pia, ou use a sincroniza\u00e7\u00e3o com o Google Drive abaixo. Para restaurar pelo texto, cole-o aqui e clique em Restaurar.",field:"area",value:JSON.stringify(S),ok:"Restaurar",extra:syncUI,onOk:v=>{
+  try{const o=JSON.parse(v);if(!Array.isArray(o.turmas))throw 0;S=o;if(!turma())S.atual=S.turmas[0]?.id||null;save();render();}catch(e){alert("Texto de backup inválido.");return false;}}});
+
+try{const th=localStorage.getItem("diario-tema"); if(th)document.documentElement.dataset.theme=th;}catch(e){}
+$("bTema").onclick=()=>{
+  const r=document.documentElement, atual=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"), novo=atual==="dark"?"light":"dark";
+  r.dataset.theme=novo; try{localStorage.setItem("diario-tema",novo);}catch(e){}
+};
+render();
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
